@@ -3,6 +3,10 @@ name: Publish images to GHCR
 on:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   copy-images:
     runs-on: ubuntu-latest
