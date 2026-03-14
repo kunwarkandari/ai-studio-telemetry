@@ -1,0 +1,18 @@
+services:
+  langfuse-worker:
+    image: ghcr.io/kunwarkandari/langfuse/langfuse-worker:${LANGFUSE_IMAGE_TAG:-3}
+
+  langfuse-web:
+    image: ghcr.io/kunwarkandari/langfuse/langfuse:${LANGFUSE_IMAGE_TAG:-3}
+
+  clickhouse:
+    image: ghcr.io/kunwarkandari/langfuse/clickhouse-server:${CLICKHOUSE_IMAGE_TAG:-latest}
+
+  minio:
+    image: ghcr.io/kunwarkandari/langfuse/minio:${MINIO_IMAGE_TAG:-latest}
+
+  redis:
+    image: ghcr.io/kunwarkandari/langfuse/redis:${REDIS_IMAGE_TAG:-7}
+
+  postgres:
+    image: ghcr.io/kunwarkandari/langfuse/postgres:${POSTGRES_IMAGE_TAG:-17}

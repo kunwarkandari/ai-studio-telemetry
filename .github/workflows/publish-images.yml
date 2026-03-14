@@ -1,0 +1,43 @@
+name: Publish images to GHCR
+
+on:
+  workflow_dispatch:
+
+jobs:
+  copy-images:
+    runs-on: ubuntu-latest
+    steps:
+      # Authenticate to GHCR so we can push images.
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Optional Docker Hub login to avoid rate limits.
+      - name: Log in to Docker Hub
+        if: ${{ secrets.DOCKERHUB_USER && secrets.DOCKERHUB_TOKEN }}
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Install crane
+        run: |
+          curl -sL https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz \
+            | tar -xz crane
+          sudo mv crane /usr/local/bin/crane
+
+      - name: Copy images to GHCR
+        env:
+          OWNER: kunwarkandari
+          NS: langfuse
+        run: |
+          crane cp docker.io/langfuse/langfuse:3 ghcr.io/$OWNER/$NS/langfuse:3
+          crane cp docker.io/langfuse/langfuse-worker:3 ghcr.io/$OWNER/$NS/langfuse-worker:3
+          crane cp docker.io/clickhouse/clickhouse-server:latest ghcr.io/$OWNER/$NS/clickhouse-server:latest
+          crane cp cgr.dev/chainguard/minio:latest ghcr.io/$OWNER/$NS/minio:latest
+          crane cp docker.io/redis:7 ghcr.io/$OWNER/$NS/redis:7
+          crane cp docker.io/postgres:17 ghcr.io/$OWNER/$NS/postgres:17
